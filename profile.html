@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .profile-header {
+            margin-bottom: 2rem;
+        }
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #666;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #f8f9fa;
+            color: #ff6b6b;
+        }
+        .profile-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .profile-avatar-section {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            color: white;
+        }
+            .profile-avatar-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 1.5rem;
+        }
+        .profile-avatar {
+            width: 100%;
+            height: 100%;
+            background: white;
+            color: #ff6b6b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        .profile-avatar:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        }
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .avatar-actions {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .upload-btn, .remove-photo-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            color: white;
+        }
+        .upload-btn {
+            background: #ff6b6b;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .remove-photo-btn {
+            background: #dc3545;
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.2);
+        }
+        .upload-btn:hover, .remove-photo-btn:hover {
+            transform: scale(1.1);
+        }
+        .profile-info {
+            margin-top: 1rem;
+        }
+        .profile-info h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        .profile-info p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+        }
+        .profile-form-container {
+            padding: 2rem;
+        }
+        .profile-form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+        .input-group {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
+            outline: none;
+        }
+        .form-control[readonly] {
+            background: #f8f9fa;
+            cursor: not-allowed;
+        }
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: #ff6b6b;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #ff5252;
+        }
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+        }
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        .avatar-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #ff6b6b;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .upload-error {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #dc3545;
+            font-size: 0.85rem;
+            text-align: center;
+            width: 100%;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 1rem auto;
+            }
+            .profile-avatar-section {
+                padding: 2rem 1rem;
+            }
+            .profile-avatar-container {
+                width: 140px;
+                height: 140px;
+            }
+            .profile-avatar {
+                font-size: 3.5rem;
+            }
+            .upload-btn, .remove-photo-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .profile-form-container {
+                padding: 1.5rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .profile-avatar-container {
+                width: 120px;
+                height: 120px;
+            }
+            .profile-avatar {
+                font-size: 3rem;
+            }
+            .upload-btn, .remove-photo-btn {
+                width: 32px;
+                height: 32px;
+            }
+            .form-actions {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <a href="dashboard.html" class="back-btn" id="goBackBtn">
+                <i class="uil uil-arrow-left"></i>
+                <span>Back to Dashboard</span>
+            </a>
+        </div>
+        
+        <div class="profile-content">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar-container">
+                    <div class="profile-avatar" id="profileAvatar">
+                        <img id="profileImage" src="" alt="Profile" style="display: none;">
+                        <i class="uil uil-user" id="defaultAvatar"></i>
+                        <div class="avatar-loading" id="avatarLoading" style="display: none;">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                    <div class="avatar-actions">
+                        <label for="profilePhotoUpload" class="upload-btn" title="Change Profile Photo">
+                            <i class="uil uil-camera"></i>
+                        </label>
+                        <button class="remove-photo-btn" id="removePhotoBtn" title="Remove Photo" style="display: none;">
+                            <i class="uil uil-trash-alt"></i>
+                        </button>
+                    </div>
+                    <input type="file" id="profilePhotoUpload" accept="image/*" style="display: none;">
+                    <div class="upload-error" id="uploadError"></div>
+                </div>
+                <div class="profile-info">
+                    <h2 id="profileName">Loading...</h2>
+                    <p id="profileEmail" class="text-muted">Loading...</p>
+                </div>
+            </div>
+
+            <div class="profile-form-container">
+                <form id="profileForm" class="profile-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <div class="input-group">
+                            <i class="uil uil-user input-icon"></i>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <div class="input-group">
+                            <i class="uil uil-envelope input-icon"></i>
+                            <input type="email" id="email" name="email" class="form-control" required readonly>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <div class="input-group">
+                            <i class="uil uil-phone input-icon"></i>
+                            <input type="tel" id="phone" name="phone" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="saveBtn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery-3.5.1.min.js"></script>
+    <script>
+    // Utility: Get and set user info in localStorage
+    function getLoggedInUser() {
+        const email = localStorage.getItem('userEmail');
+        let name = '';
+        let phone = '';
+        let password = '';
+        const users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+        if (users[email]) {
+            name = users[email].name || email.split('@')[0];
+            phone = users[email].phone || '';
+            password = users[email].password || '';
+        } else {
+            name = email ? email.split('@')[0] : '';
+        }
+        return { email, name, phone, password };
+    }
+
+    function setLoggedInUser({ email, name, phone, password }) {
+        let users = JSON.parse(localStorage.getItem('registeredUsers') || '{}');
+        if (!users[email]) users[email] = {};
+        users[email].name = name;
+        users[email].phone = phone;
+        users[email].password = password;
+        localStorage.setItem('registeredUsers', JSON.stringify(users));
+    }
+
+    // Phone number validation
+    function validatePhoneNumber(phone) {
+        // Remove any non-digit characters
+        const cleaned = phone.replace(/\D/g, '');
+        
+        // Check if the cleaned number is between 10 and 15 digits
+        if (cleaned.length < 10 || cleaned.length > 15) {
+            return false;
+        }
+        
+        // Check if it starts with a valid country code or local number
+        const validStarts = ['09', '63', '+63'];
+        return validStarts.some(start => cleaned.startsWith(start.replace(/\D/g, '')));
+    }
+
+    // Format phone number
+    function formatPhoneNumber(phone) {
+        const cleaned = phone.replace(/\D/g, '');
+        if (cleaned.startsWith('63')) {
+            return '+63 ' + cleaned.slice(2).replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        } else if (cleaned.startsWith('09')) {
+            return '+63 ' + cleaned.slice(1).replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+        }
+        return cleaned.replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3');
+    }
+
+    // Populate profile info
+    function loadProfile() {
+        const user = getLoggedInUser();
+        if (!user.email) {
+            window.location.href = 'login.html';
+            return;
+        }
+        $('#profileName').text(user.name);
+        $('#profileEmail').text(user.email);
+        $('#name').val(user.name);
+        $('#email').val(user.email);
+        $('#phone').val(user.phone || '');
+        
+        // Load profile photo
+        const profilePhoto = localStorage.getItem(`profilePhoto_${user.email}`);
+        if (profilePhoto) {
+            $('#profileImage').attr('src', profilePhoto).show();
+            $('#defaultAvatar').hide();
+            $('#removePhotoBtn').show();
+        } else {
+            $('#profileImage').hide();
+            $('#defaultAvatar').show();
+            $('#removePhotoBtn').hide();
+        }
+    }
+
+    // Handle phone number input
+    $('#phone').on('input', function() {
+        let value = $(this).val().replace(/\D/g, '');
+        if (value.length > 0) {
+            if (!value.startsWith('09') && !value.startsWith('63')) {
+                value = '09' + value;
+            }
+            $(this).val(formatPhoneNumber(value));
+        }
+    });
+
+    // Save changes
+    $('#profileForm').submit(function(e) {
+        e.preventDefault();
+        
+        const name = $('#name').val().trim();
+        const email = $('#email').val().trim();
+        const phone = $('#phone').val().trim();
+        
+        // Validate name
+        if (!name) {
+            showError('Please enter your name');
+            return;
+        }
+
+        // Validate phone
+        if (!phone) {
+            showError('Please enter your phone number');
+            return;
+        }
+
+        if (!validatePhoneNumber(phone)) {
+            showError('Please enter a valid phone number (e.g., 09XX XXX XXXX)');
+            return;
+        }
+
+        // Get current user data
+        const user = getLoggedInUser();
+        
+        // Update user data
+        user.name = name;
+        user.phone = phone;
+        setLoggedInUser(user);
+
+        // Update UI
+        $('#profileName').text(name);
+        $('#profileEmail').text(email);
+        
+        // Show success message
+        showSuccess('Profile updated successfully!');
+
+        // Dispatch event to update other pages
+        window.dispatchEvent(new CustomEvent('profileUpdated', {
+            detail: { email: user.email, name: name, phone: phone }
+        }));
+
+        // Trigger storage event for other tabs
+        localStorage.setItem('lastProfileUpdate', Date.now().toString());
+    });
+
+    // Show success message
+    function showSuccess(message) {
+        const successDiv = $('<div>')
+            .addClass('alert alert-success')
+            .text(message)
+            .css({
+                'position': 'fixed',
+                'top': '20px',
+                'right': '20px',
+                'z-index': '1000',
+                'padding': '15px 25px',
+                'border-radius': '8px',
+                'box-shadow': '0 4px 12px rgba(0,0,0,0.1)',
+                'animation': 'slideIn 0.3s ease-out'
+            });
+
+        $('body').append(successDiv);
+        setTimeout(() => {
+            successDiv.fadeOut(300, function() {
+                $(this).remove();
+            });
+        }, 3000);
+        }
+
+        // Show error message
+        function showError(message) {
+        const errorDiv = $('<div>')
+            .addClass('alert alert-danger')
+            .text(message)
+            .css({
+                'position': 'fixed',
+                'top': '20px',
+                'right': '20px',
+                'z-index': '1000',
+                'padding': '15px 25px',
+                'border-radius': '8px',
+                'box-shadow': '0 4px 12px rgba(0,0,0,0.1)',
+                'animation': 'slideIn 0.3s ease-out'
+            });
+
+        $('body').append(errorDiv);
+            setTimeout(() => {
+            errorDiv.fadeOut(300, function() {
+                $(this).remove();
+            });
+            }, 3000);
+        }
+
+    // Add CSS for animations
+    $('<style>')
+        .text(`
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+        `)
+        .appendTo('head');
+
+    // On load
+    $(function() {
+        loadProfile();
+        
+        // Listen for profile updates from other tabs
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'lastProfileUpdate') {
+                loadProfile();
+            }
+        });
+    });
+    </script>
+</body>
+</html>
